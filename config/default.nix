@@ -7,5 +7,6 @@
     ./oil.nix
     ./telescope.nix
     ./lsp.nix
+    ./colorscheme.nix
   ];
 }

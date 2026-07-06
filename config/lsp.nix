@@ -76,6 +76,49 @@
     ];
   };
 
+  # Format-on-save = ESLint fix-all.
+  #
+  # This repo runs Prettier THROUGH ESLint (each eslint.config.mjs ends with
+  # `eslint-plugin-prettier/recommended`), so there is no standalone Prettier
+  # step. Running ESLint's `applyAllFixes` on save applies Prettier formatting
+  # AND the autofixable lint rules (simple-import-sort, unused-imports) in one
+  # pass — matching `npm run lint`. A separate Prettier formatter would be
+  # redundant and could fight these rules, so we deliberately don't add one.
+  #
+  # The ESLint LSP registers as a formatter (base config sets `format = true`),
+  # and its formatting runs `eslint --fix`, i.e. the full autofix pass: Prettier
+  # formatting AND the other fixable rules (simple-import-sort, unused-imports).
+  # `vim.lsp.buf.format({ async = false })` is genuinely synchronous — the edit
+  # lands before the write. (`LspEslintFixAll` applies its edit on a deferred
+  # tick, so it races the write and is unreliable here.) The `filter` restricts
+  # this to ESLint, and if ESLint isn't attached to the buffer, nothing happens.
+  autoCmd = [
+    {
+      event = [ "BufWritePre" ];
+      pattern = [
+        "*.ts"
+        "*.tsx"
+        "*.js"
+        "*.jsx"
+        "*.mjs"
+        "*.cjs"
+        "*.json"
+        "*.yml"
+        "*.yaml"
+      ];
+      desc = "ESLint fix (Prettier + import sort + lint autofixes) before save";
+      callback = lib.nixvim.mkRaw ''
+        function(args)
+          vim.lsp.buf.format({
+            bufnr = args.buf,
+            async = false,
+            filter = function(client) return client.name == "eslint" end,
+          })
+        end
+      '';
+    }
+  ];
+
   # To use vtsls instead (Effect plugin + the project's own TypeScript), replace
   # the `ts_ls.enable` line above with:
   #

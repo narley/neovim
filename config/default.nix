@@ -11,5 +11,13 @@
     ./lsp.nix
     ./colorscheme.nix
     ./statusline.nix
+    ./treesitter.nix
+    ./indent-blankline.nix
+    ./gitsigns.nix
+    ./rainbow-delimiters.nix
+    ./autopairs.nix
+    ./which-key.nix
+    ./trouble.nix
+    ./fidget.nix
   ];
 }

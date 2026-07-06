@@ -6,5 +6,6 @@
     ./ledger.nix
     ./oil.nix
     ./telescope.nix
+    ./lsp.nix
   ];
 }

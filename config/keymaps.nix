@@ -25,5 +25,39 @@
       action = "<cmd>wa<cr>";
       options.desc = "Save all files";
     }
+
+    # Window navigation — move the cursor between splits.
+    {
+      mode = "n";
+      key = "<leader>wh";
+      action = "<C-w>h";
+      options.desc = "Go to window left";
+    }
+    {
+      mode = "n";
+      key = "<leader>wj";
+      action = "<C-w>j";
+      options.desc = "Go to window below";
+    }
+    {
+      mode = "n";
+      key = "<leader>wk";
+      action = "<C-w>k";
+      options.desc = "Go to window above";
+    }
+    {
+      mode = "n";
+      key = "<leader>wl";
+      action = "<C-w>l";
+      options.desc = "Go to window right";
+    }
+
+    # Close the current buffer.
+    {
+      mode = "n";
+      key = "<leader>bd";
+      action = "<cmd>bdelete<cr>";
+      options.desc = "Close buffer";
+    }
   ];
 }

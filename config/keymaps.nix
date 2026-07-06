@@ -10,5 +10,20 @@
       action = "<Esc>";
       options.desc = "Exit insert mode";
     }
+    {
+      # <Space>fs — save the current file. Since <Space>fsa also exists, this
+      # waits 'timeoutlen' for a possible "a" before firing.
+      mode = "n";
+      key = "<leader>fs";
+      action = "<cmd>w<cr>";
+      options.desc = "Save file";
+    }
+    {
+      # <Space>fsa — write all modified buffers.
+      mode = "n";
+      key = "<leader>fsa";
+      action = "<cmd>wa<cr>";
+      options.desc = "Save all files";
+    }
   ];
 }

@@ -8,5 +8,6 @@
     ./telescope.nix
     ./lsp.nix
     ./colorscheme.nix
+    ./statusline.nix
   ];
 }

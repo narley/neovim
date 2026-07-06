@@ -3,5 +3,6 @@
   imports = [
     ./bufferline.nix
     ./ledger.nix
+    ./oil.nix
   ];
 }

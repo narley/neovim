@@ -52,6 +52,53 @@
       options.desc = "Go to window right";
     }
 
+    # Splits and window close. The rightbelow/belowright modifiers force the new
+    # split to the right / below regardless of 'splitright'/'splitbelow'.
+    {
+      mode = "n";
+      key = "<leader>w/";
+      action = "<cmd>rightbelow vsplit<cr>";
+      options.desc = "Split window right";
+    }
+    {
+      mode = "n";
+      key = "<leader>w-";
+      action = "<cmd>belowright split<cr>";
+      options.desc = "Split window down";
+    }
+    {
+      mode = "n";
+      key = "<leader>wd";
+      action = "<cmd>close<cr>";
+      options.desc = "Close window";
+    }
+
+    # Move the current window to the far left / bottom / top / right.
+    {
+      mode = "n";
+      key = "<leader>wH";
+      action = "<C-w>H";
+      options.desc = "Move window left";
+    }
+    {
+      mode = "n";
+      key = "<leader>wJ";
+      action = "<C-w>J";
+      options.desc = "Move window down";
+    }
+    {
+      mode = "n";
+      key = "<leader>wK";
+      action = "<C-w>K";
+      options.desc = "Move window up";
+    }
+    {
+      mode = "n";
+      key = "<leader>wL";
+      action = "<C-w>L";
+      options.desc = "Move window right";
+    }
+
     # Close the current buffer.
     {
       mode = "n";

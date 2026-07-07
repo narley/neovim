@@ -5,7 +5,13 @@
   # `Z` stash, `l` log. It auto-detects and uses the plugins already enabled
   # here — telescope (pickers), gitsigns (hunk staging) and diffview (diffs +
   # 3-way merge-conflict resolution).
-  plugins.neogit.enable = true;
+  plugins.neogit = {
+    enable = true;
+    # Syntax-highlight the code inside diff hunks (per the file's language) via
+    # treesitter, instead of showing them as plain +/- text. Off by default in
+    # Neogit; works here because all treesitter grammars are installed.
+    settings.treesitter_diff_highlight = true;
+  };
 
   # diffview.nvim — the diff / merge-conflict UI Neogit opens when you view a
   # change. Also usable standalone via :DiffviewOpen.

@@ -21,5 +21,6 @@
     ./fidget.nix
     ./persistence.nix
     ./neogit.nix
+    ./project.nix
   ];
 }

@@ -22,5 +22,6 @@
     ./persistence.nix
     ./neogit.nix
     ./project.nix
+    ./flash.nix
   ];
 }

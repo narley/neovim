@@ -14,6 +14,11 @@
   opts.number = true;
   opts.relativenumber = true;
 
+  # Highlight the line the cursor is on, so it's easy to spot where you are.
+  # `cursorlineopt = "both"` (the default) tints both the line and its number;
+  # use "line" for just the line, or "number" for just the number.
+  opts.cursorline = true;
+
   # Floating windows (LSP hover/`K`, signature help, diagnostic floats) get a
   # rounded border so their edge is clearly separated from the buffer behind
   # them. Neovim 0.11+ global default; floats that set their own border (e.g.

@@ -107,6 +107,22 @@
       action = "<cmd>bdelete<cr>";
       options.desc = "Close buffer";
     }
+
+    # Cycle buffers in the order shown in the bufferline. BufferLineCycle*
+    # follows the visible tab order; plain :bnext/:bprevious go by buffer
+    # number, which can differ from what you see.
+    {
+      mode = "n";
+      key = "<leader>bn";
+      action = "<cmd>BufferLineCycleNext<cr>";
+      options.desc = "Next buffer";
+    }
+    {
+      mode = "n";
+      key = "<leader>bp";
+      action = "<cmd>BufferLineCyclePrev<cr>";
+      options.desc = "Previous buffer";
+    }
   ]
   # <Space>1 … <Space>9 jump straight to the window with that number — the
   # number shown at the left of each split's winbar (winnr()). `:<N>wincmd w`

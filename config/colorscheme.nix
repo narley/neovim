@@ -14,6 +14,21 @@
       code_style = {
         comments = "italic";
       };
+
+      # Make floating windows (LSP hover/`K`, diagnostic floats) stand out from
+      # the editor: give their body the palette's darker background (`bg_d`,
+      # #21252b vs the editor's #282c34) and their border a blue tint. The `$`
+      # values are onedark palette references, so they stay correct if `style`
+      # changes above. Combined with `winborder = "rounded"` in options.nix.
+      highlights = {
+        NormalFloat = {
+          bg = "$bg_d";
+        };
+        FloatBorder = {
+          fg = "$blue";
+          bg = "$bg_d";
+        };
+      };
     };
   };
 }

@@ -28,6 +28,27 @@
     update_in_insert = false;
   };
 
+  # Trim leading/trailing blank lines from LSP floating previews (hover/`K`,
+  # signature help). Language servers — ts_ls especially — pad hover markdown
+  # with empty lines, which leaves a band of background between the text and
+  # the rounded `winborder`, making the border look detached. Stripping the
+  # outer blanks lets the border sit flush against the content. This wraps the
+  # single function every float preview goes through, so it applies everywhere.
+  extraConfigLua = ''
+    local orig = vim.lsp.util.open_floating_preview
+    vim.lsp.util.open_floating_preview = function(contents, syntax, opts, ...)
+      if type(contents) == "table" then
+        while #contents > 0 and contents[1]:match("^%s*$") do
+          table.remove(contents, 1)
+        end
+        while #contents > 0 and contents[#contents]:match("^%s*$") do
+          table.remove(contents)
+        end
+      end
+      return orig(contents, syntax, opts, ...)
+    end
+  '';
+
   lsp = {
     servers = {
       ts_ls.enable = true;

@@ -14,6 +14,13 @@
   opts.number = true;
   opts.relativenumber = true;
 
+  # Floating windows (LSP hover/`K`, signature help, diagnostic floats) get a
+  # rounded border so their edge is clearly separated from the buffer behind
+  # them. Neovim 0.11+ global default; floats that set their own border (e.g.
+  # telescope) are unaffected. Pair this with the darker NormalFloat background
+  # set in colorscheme.nix.
+  opts.winborder = "rounded";
+
   # Winbar: a thin bar at the top of every split showing its window number
   # (followed by the file name and a modified flag). Neovim numbers windows
   # left-to-right, top-to-bottom; jump straight to one with `<count><C-w>w`

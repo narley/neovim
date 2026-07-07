@@ -9,8 +9,11 @@
 
   # What a session captures. `skiprtp` keeps sessions small; `localoptions`
   # preserves per-window settings (e.g. filetype) so restored buffers look
-  # right immediately.
-  opts.sessionoptions = "buffers,curdir,folds,globals,skiprtp,tabpages,winpos,winsize,localoptions";
+  # right immediately. Deliberately NOT `folds`: with treesitter folding
+  # (foldmethod=expr, set in options.nix) folds are recomputed from the code,
+  # and saving them makes mksession write `setlocal foldmethod=manual`, which on
+  # restore overrides the global expr and breaks `zc` (E490).
+  opts.sessionoptions = "buffers,curdir,globals,skiprtp,tabpages,winpos,winsize,localoptions";
 
   autoCmd = [
     {

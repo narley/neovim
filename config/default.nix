@@ -25,5 +25,8 @@
     ./flash.nix
     ./colorizer.nix
     ./treesitter-textobjects.nix
+    ./comment.nix
+    ./surround.nix
+    ./tabout.nix
   ];
 }

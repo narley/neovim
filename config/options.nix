@@ -13,4 +13,13 @@
   # current line would then show 0).
   opts.number = true;
   opts.relativenumber = true;
+
+  # Winbar: a thin bar at the top of every split showing its window number
+  # (followed by the file name and a modified flag). Neovim numbers windows
+  # left-to-right, top-to-bottom; jump straight to one with `<count><C-w>w`
+  # — e.g. `2<C-w>w` for window 2. `%{winnr()}` is evaluated per window, so
+  # each split shows its own number; `%t` is the file's tail, `%m` the [+]
+  # modified flag. lualine's statusline is global (globalstatus), so the
+  # winbar is what carries per-split identity here.
+  opts.winbar = " %{winnr()}  %t %m";
 }

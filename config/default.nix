@@ -19,5 +19,6 @@
     ./which-key.nix
     ./trouble.nix
     ./fidget.nix
+    ./persistence.nix
   ];
 }

@@ -24,5 +24,6 @@
     ./project.nix
     ./flash.nix
     ./colorizer.nix
+    ./treesitter-textobjects.nix
   ];
 }

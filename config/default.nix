@@ -20,5 +20,6 @@
     ./trouble.nix
     ./fidget.nix
     ./persistence.nix
+    ./neogit.nix
   ];
 }

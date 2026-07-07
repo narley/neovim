@@ -16,6 +16,11 @@
         action = "live_grep";
         options.desc = "Telescope: live grep";
       };
+      # <Space>/ is an alias for <Space>fg — live grep across the project.
+      "<leader>/" = {
+        action = "live_grep";
+        options.desc = "Telescope: live grep";
+      };
       "<leader>fb" = {
         action = "buffers";
         options.desc = "Telescope: buffers";

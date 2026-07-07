@@ -23,5 +23,6 @@
     ./neogit.nix
     ./project.nix
     ./flash.nix
+    ./colorizer.nix
   ];
 }

@@ -1,3 +1,4 @@
+{ lib, ... }:
 {
   # General (non-plugin) keymaps. Plugin-specific maps live in their own files
   # (telescope.nix, oil.nix, lsp.nix).
@@ -106,5 +107,15 @@
       action = "<cmd>bdelete<cr>";
       options.desc = "Close buffer";
     }
-  ];
+  ]
+  # <Space>1 … <Space>9 jump straight to the window with that number — the
+  # number shown at the left of each split's winbar (winnr()). `:<N>wincmd w`
+  # is the count form of <C-w>w. Windows are numbered left-to-right, top-to-
+  # bottom; if fewer than N windows exist it stops at the last one.
+  ++ map (n: {
+    mode = "n";
+    key = "<leader>${toString n}";
+    action = "<cmd>${toString n}wincmd w<cr>";
+    options.desc = "Go to window ${toString n}";
+  }) (lib.range 1 9);
 }

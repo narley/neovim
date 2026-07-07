@@ -29,4 +29,15 @@
   # modified flag. lualine's statusline is global (globalstatus), so the
   # winbar is what carries per-split identity here.
   opts.winbar = " %{winnr()}  %t %m";
+
+  # Folding driven by treesitter, so folds follow real code structure
+  # (functions, blocks, tables) rather than indentation. `zc` closes the fold
+  # under the cursor, `zo` opens it, `za` toggles; `zR` opens all, `zM` closes
+  # all. foldlevel(start) = 99 means files open fully unfolded — you fold on
+  # demand instead of everything being collapsed on open. Buffers without a
+  # treesitter parser just fall back to no folds.
+  opts.foldmethod = "expr";
+  opts.foldexpr = "v:lua.vim.treesitter.foldexpr()";
+  opts.foldlevel = 99;
+  opts.foldlevelstart = 99;
 }

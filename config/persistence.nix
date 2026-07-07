@@ -25,17 +25,22 @@
       '';
     }
     {
-      # Auto-restore: when nvim is launched with NO file arguments (just `nvim`
-      # in a project dir) and not from stdin, load that directory's session.
-      # Opening a specific file (`nvim foo.ts`) skips restore so you land on that
-      # file. `nested` lets restored buffers fire their FileType/syntax autocmds.
+      # Auto-restore the MOST RECENT session (load { last = true }) when nvim is
+      # launched with NO file arguments and not from stdin — i.e. "continue where
+      # I stopped". We deliberately do NOT key off the launch directory here:
+      # project.nvim changes the cwd to the file's project root, so a session
+      # gets saved under (say) packages/api while nvim is launched from the repo
+      # root, and a cwd-keyed load() would find nothing. Loading the last session
+      # sidesteps that entirely; the session's own `cd` line restores the right
+      # directory. Opening a specific file (`nvim foo.ts`) skips restore.
+      # `nested` lets restored buffers fire their FileType/syntax autocmds.
       event = [ "VimEnter" ];
-      desc = "Restore the directory's session when nvim opens with no args";
+      desc = "Resume the most recent session when nvim opens with no args";
       nested = true;
       callback = lib.nixvim.mkRaw ''
         function()
           if vim.fn.argc(-1) == 0 and not vim.g.started_with_stdin then
-            require("persistence").load()
+            require("persistence").load({ last = true })
           end
         end
       '';

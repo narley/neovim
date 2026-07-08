@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nixvim keymap cheatsheet</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%8C%A8%EF%B8%8F</text></svg>">
+  <style>
+    /* ── One Dark / One Light token system ─────────────────────────────────── */
+    :root {
+      /* light = "One Light" (onedark.nvim light style) */
+      --bg:        #fafafa;
+      --bg-2:      #f0f0f1;
+      --panel:     #ffffff;
+      --border:    #d4d4d6;
+      --border-2:  #e4e4e6;
+      --fg:        #383a42;
+      --fg-dim:    #494b53;
+      --muted:     #9d9ea3;
+      --blue:      #4078f2;
+      --green:     #4ca048;
+      --red:       #e4564a;
+      --yellow:    #b8860b;
+      --purple:    #a626a4;
+      --cyan:      #0d8fb0;
+      --orange:    #b5691a;
+      --shadow:    rgba(56,58,66,.10);
+      --kbd-shadow: rgba(56,58,66,.22);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:       #282c34;
+        --bg-2:     #21252b;
+        --panel:    #2d323c;
+        --border:   #3b414d;
+        --border-2: #343a45;
+        --fg:       #abb2bf;
+        --fg-dim:   #c2c8d2;
+        --muted:    #6b7280;
+        --blue:     #61afef;
+        --green:    #98c379;
+        --red:      #e06c75;
+        --yellow:   #e5c07b;
+        --purple:   #c678dd;
+        --cyan:     #56b6c2;
+        --orange:   #d19a66;
+        --shadow:   rgba(0,0,0,.28);
+        --kbd-shadow: rgba(0,0,0,.45);
+      }
+    }
+    /* explicit toggle wins over the OS media query, both directions */
+    :root[data-theme="light"] {
+      --bg:#fafafa; --bg-2:#f0f0f1; --panel:#ffffff; --border:#d4d4d6; --border-2:#e4e4e6;
+      --fg:#383a42; --fg-dim:#494b53; --muted:#9d9ea3;
+      --blue:#4078f2; --green:#4ca048; --red:#e4564a; --yellow:#b8860b;
+      --purple:#a626a4; --cyan:#0d8fb0; --orange:#b5691a;
+      --shadow:rgba(56,58,66,.10); --kbd-shadow:rgba(56,58,66,.22);
+    }
+    :root[data-theme="dark"] {
+      --bg:#282c34; --bg-2:#21252b; --panel:#2d323c; --border:#3b414d; --border-2:#343a45;
+      --fg:#abb2bf; --fg-dim:#c2c8d2; --muted:#6b7280;
+      --blue:#61afef; --green:#98c379; --red:#e06c75; --yellow:#e5c07b;
+      --purple:#c678dd; --cyan:#56b6c2; --orange:#d19a66;
+      --shadow:rgba(0,0,0,.28); --kbd-shadow:rgba(0,0,0,.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace; }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: clamp(1.4rem, 4vw, 3.2rem) clamp(1rem, 4vw, 2.2rem) 4rem;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    header { margin-bottom: 2.4rem; }
+    .prompt {
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: .82rem;
+      letter-spacing: .04em;
+      color: var(--muted);
+      margin-bottom: .9rem;
+    }
+    .prompt .tilde { color: var(--green); }
+    .prompt .arrow { color: var(--blue); }
+    h1 {
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: clamp(1.7rem, 5.4vw, 2.9rem);
+      line-height: 1.08;
+      margin: 0;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      text-wrap: balance;
+      color: var(--fg-dim);
+    }
+    h1 .accent { color: var(--blue); }
+    .lede {
+      margin: .9rem 0 0;
+      max-width: 60ch;
+      color: var(--fg);
+      font-size: 1.02rem;
+    }
+    .meta {
+      margin-top: 1.3rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem .55rem;
+      align-items: center;
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: .78rem;
+    }
+    .tag {
+      padding: .2rem .55rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--bg-2);
+    }
+    .tag b { color: var(--fg-dim); font-weight: 600; }
+
+    /* ── Section titles ─────────────────────────────────────────────────────── */
+    .sec-title {
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: .74rem;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      color: var(--muted);
+      margin: 2.8rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+    }
+    .sec-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-2);
+    }
+
+    /* ── Leader legend (the mnemonic map) ───────────────────────────────────── */
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+      gap: .55rem;
+    }
+    .prefix {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .6rem .7rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      box-shadow: 0 1px 2px var(--shadow);
+    }
+    .prefix .glyph {
+      flex: none;
+      width: 2rem;
+      height: 2rem;
+      display: grid;
+      place-items: center;
+      border-radius: 7px;
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--bg);
+      background: var(--accent, var(--blue));
+    }
+    .prefix .lbl { display: flex; flex-direction: column; line-height: 1.2; }
+    .prefix .lbl .k {
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: .72rem; color: var(--muted);
+    }
+    .prefix .lbl .v { font-size: .86rem; font-weight: 600; color: var(--fg-dim); }
+
+    /* ── Card grid ──────────────────────────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1rem;
+      align-items: start;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.05rem 1.1rem 1.15rem;
+      box-shadow: 0 1px 2px var(--shadow);
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px var(--shadow);
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+    }
+    .card h2 {
+      margin: 0 0 .1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: 1.02rem;
+      color: var(--fg-dim);
+      font-weight: 650;
+    }
+    .card h2 .badge {
+      flex: none;
+      min-width: 1.65rem;
+      height: 1.65rem;
+      padding: 0 .35rem;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-weight: 700;
+      font-size: .9rem;
+      color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    }
+    .card .sub {
+      margin: 0 0 .8rem;
+      padding-left: calc(1.65rem + .6rem);
+      font-size: .78rem;
+      color: var(--muted);
+    }
+    .rows { display: flex; flex-direction: column; gap: .12rem; }
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, auto) 1fr;
+      gap: .5rem .8rem;
+      align-items: baseline;
+      padding: .3rem 0;
+      border-top: 1px solid var(--border-2);
+    }
+    .row:first-child { border-top: 0; }
+    .row .act { font-size: .86rem; color: var(--fg); }
+    .row .act .hint { color: var(--muted); }
+
+    /* ── Keycaps ────────────────────────────────────────────────────────────── */
+    .keys { display: inline-flex; flex-wrap: wrap; gap: 3px; }
+    kbd {
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: .78rem;
+      line-height: 1.4;
+      padding: .05rem .4rem;
+      background: var(--bg-2);
+      color: var(--fg-dim);
+      border: 1px solid var(--border);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      white-space: nowrap;
+    }
+    kbd.lead {
+      color: var(--accent);
+      border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+      background: color-mix(in srgb, var(--accent) 12%, var(--bg-2));
+    }
+
+    /* ── Ambient strip ──────────────────────────────────────────────────────── */
+    .ambient {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: .5rem .9rem;
+    }
+    .amb {
+      display: flex;
+      gap: .55rem;
+      align-items: baseline;
+      padding: .45rem .2rem;
+      border-top: 1px solid var(--border-2);
+      font-size: .84rem;
+    }
+    .amb .n { color: var(--fg-dim); font-weight: 600; white-space: nowrap; }
+    .amb .d { color: var(--muted); }
+
+    .tip {
+      margin-top: 1rem;
+      padding: .85rem 1rem;
+      border: 1px dashed color-mix(in srgb, var(--green) 45%, var(--border));
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--green) 8%, transparent);
+      font-size: .9rem;
+      color: var(--fg);
+    }
+    .tip b { color: var(--green); }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border-2);
+      font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
+      font-size: .76rem;
+      color: var(--muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem .9rem;
+      justify-content: space-between;
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    footer a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; border-radius: 3px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card { transition: none; }
+      .card:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="prompt mono"><span class="tilde">~/Projects/neovim</span> <span class="arrow">❯</span> nvim</div>
+    <h1>Keymap &amp; feature <span class="accent">cheatsheet</span></h1>
+    <p class="lede">Every mapping in this nixvim config, grouped by its leader-prefix. The prefix letter <em>is</em> the mnemonic — <span class="mono">Space</span> then a letter that names the category.</p>
+    <div class="meta mono">
+      <span class="tag"><b>leader</b> = Space</span>
+      <span class="tag"><b>theme</b> One Dark</span>
+      <span class="tag"><b>built with</b> nixvim</span>
+      <span class="tag">28 modules</span>
+    </div>
+  </header>
+
+  <!-- ── Mnemonic legend ─────────────────────────────────────────────────── -->
+  <div class="sec-title">Leader prefixes — the mnemonics</div>
+  <div class="legend">
+    <div class="prefix" style="--accent:var(--blue)">   <span class="glyph">f</span><span class="lbl"><span class="k">Spc f</span><span class="v">Files / Find</span></span></div>
+    <div class="prefix" style="--accent:var(--cyan)">   <span class="glyph">w</span><span class="lbl"><span class="k">Spc w</span><span class="v">Window</span></span></div>
+    <div class="prefix" style="--accent:var(--purple)"> <span class="glyph">b</span><span class="lbl"><span class="k">Spc b</span><span class="v">Buffer</span></span></div>
+    <div class="prefix" style="--accent:var(--green)">  <span class="glyph">S</span><span class="lbl"><span class="k">Spc S</span><span class="v">Session</span></span></div>
+    <div class="prefix" style="--accent:var(--orange)"> <span class="glyph">g</span><span class="lbl"><span class="k">Spc g</span><span class="v">Git</span></span></div>
+    <div class="prefix" style="--accent:var(--orange)"> <span class="glyph">h</span><span class="lbl"><span class="k">Spc h</span><span class="v">Hunk (git)</span></span></div>
+    <div class="prefix" style="--accent:var(--yellow)"> <span class="glyph">c</span><span class="lbl"><span class="k">Spc c</span><span class="v">Code</span></span></div>
+    <div class="prefix" style="--accent:var(--yellow)"> <span class="glyph">r</span><span class="lbl"><span class="k">Spc r</span><span class="v">Rename</span></span></div>
+    <div class="prefix" style="--accent:var(--red)">    <span class="glyph">x</span><span class="lbl"><span class="k">Spc x</span><span class="v">Trouble</span></span></div>
+    <div class="prefix" style="--accent:var(--purple)"> <span class="glyph">j</span><span class="lbl"><span class="k">Spc j</span><span class="v">Jump</span></span></div>
+    <div class="prefix" style="--accent:var(--blue)">   <span class="glyph">'</span><span class="lbl"><span class="k">Spc '</span><span class="v">Terminal</span></span></div>
+    <div class="prefix" style="--accent:var(--blue)">   <span class="glyph">/</span><span class="lbl"><span class="k">Spc /</span><span class="v">Grep</span></span></div>
+  </div>
+
+  <!-- ── Command cards ───────────────────────────────────────────────────── -->
+  <div class="sec-title">Commands by category</div>
+  <div class="grid">
+
+    <!-- Files / Find -->
+    <div class="card" style="--accent:var(--blue)">
+      <h2><span class="badge">f</span> Files &amp; Find</h2>
+      <p class="sub">Telescope pickers, saving, file tree</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>f</kbd></span><span class="act">Find files</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>g</kbd></span><span class="act">Live grep <span class="hint">— also <kbd class="lead">Spc</kbd> <kbd>/</kbd></span></span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>b</kbd></span><span class="act">Open buffers</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>r</kbd></span><span class="act">Resume last picker</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>h</kbd></span><span class="act">Help tags</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>p</kbd></span><span class="act">Switch project</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>s</kbd></span><span class="act">Save file <span class="hint">· <kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>s</kbd><kbd>a</kbd> save all</span></span></div>
+        <div class="row"><span class="keys"><kbd>-</kbd></span><span class="act">File explorer (Oil) — edit &amp; <kbd>:w</kbd></span></div>
+      </div>
+    </div>
+
+    <!-- Windows -->
+    <div class="card" style="--accent:var(--cyan)">
+      <h2><span class="badge">w</span> Windows</h2>
+      <p class="sub">Splits &amp; navigation · numbers in the winbar</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>w</kbd><kbd>h/j/k/l</kbd></span><span class="act">Focus left / down / up / right</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>w</kbd><kbd>/</kbd></span><span class="act">Split right</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>w</kbd><kbd>-</kbd></span><span class="act">Split down</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>w</kbd><kbd>d</kbd></span><span class="act">Close window</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>w</kbd><kbd>H/J/K/L</kbd></span><span class="act">Move window far left / down / up / right</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>1</kbd>…<kbd>9</kbd></span><span class="act">Jump to window <span class="hint">(winbar number)</span></span></div>
+      </div>
+    </div>
+
+    <!-- Buffers -->
+    <div class="card" style="--accent:var(--purple)">
+      <h2><span class="badge">b</span> Buffers</h2>
+      <p class="sub">The bufferline tabs across the top</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>b</kbd><kbd>n</kbd></span><span class="act">Next buffer</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>b</kbd><kbd>p</kbd></span><span class="act">Previous buffer</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>b</kbd><kbd>d</kbd></span><span class="act">Close buffer</span></div>
+      </div>
+    </div>
+
+    <!-- Sessions -->
+    <div class="card" style="--accent:var(--green)">
+      <h2><span class="badge">S</span> Sessions</h2>
+      <p class="sub">persistence.nvim · auto-resumes on bare <span class="mono">nvim</span></p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>S</kbd><kbd>f</kbd></span><span class="act">Switch project (Telescope picker)</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>S</kbd><kbd>s</kbd></span><span class="act">Restore this dir's session</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>S</kbd><kbd>l</kbd></span><span class="act">Restore last session</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>S</kbd><kbd>d</kbd></span><span class="act">Don't save this session</span></div>
+      </div>
+    </div>
+
+    <!-- Git -->
+    <div class="card" style="--accent:var(--orange)">
+      <h2><span class="badge">g h</span> Git</h2>
+      <p class="sub">Neogit (status) · gitsigns (hunks)</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>g</kbd><kbd>s</kbd></span><span class="act">Open status (Neogit)</span></div>
+        <div class="row"><span class="keys"><kbd>]</kbd><kbd>c</kbd> / <kbd>[</kbd><kbd>c</kbd></span><span class="act">Next / previous hunk</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>h</kbd><kbd>s</kbd></span><span class="act">Stage hunk</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>h</kbd><kbd>r</kbd></span><span class="act">Reset hunk</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>h</kbd><kbd>p</kbd></span><span class="act">Preview hunk</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>h</kbd><kbd>b</kbd></span><span class="act">Blame line</span></div>
+        <div class="row"><span class="keys"><kbd>s</kbd> <kbd>c</kbd> <kbd>p</kbd> <kbd>F</kbd></span><span class="act"><span class="hint">In Neogit:</span> stage · commit · push · pull</span></div>
+      </div>
+    </div>
+
+    <!-- Code / LSP -->
+    <div class="card" style="--accent:var(--yellow)">
+      <h2><span class="badge">c r</span> Code &amp; LSP</h2>
+      <p class="sub">ts_ls + eslint · format-on-save = ESLint fix</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd>g</kbd><kbd>d</kbd></span><span class="act">Go to definition</span></div>
+        <div class="row"><span class="keys"><kbd>g</kbd><kbd>D</kbd></span><span class="act">Find references</span></div>
+        <div class="row"><span class="keys"><kbd>K</kbd></span><span class="act">Hover docs</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>r</kbd><kbd>n</kbd></span><span class="act">Rename symbol</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>c</kbd><kbd>a</kbd></span><span class="act">Code action <span class="hint">(ESLint autofix)</span></span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>e</kbd></span><span class="act">Line diagnostics float</span></div>
+        <div class="row"><span class="keys"><kbd>]</kbd><kbd>d</kbd> / <kbd>[</kbd><kbd>d</kbd></span><span class="act">Next / previous diagnostic</span></div>
+      </div>
+    </div>
+
+    <!-- Trouble -->
+    <div class="card" style="--accent:var(--red)">
+      <h2><span class="badge">x</span> Diagnostics</h2>
+      <p class="sub">Trouble — a navigable error list</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>x</kbd><kbd>x</kbd></span><span class="act">Project diagnostics</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>x</kbd><kbd>X</kbd></span><span class="act">Current-buffer diagnostics</span></div>
+      </div>
+    </div>
+
+    <!-- Jump / Motions -->
+    <div class="card" style="--accent:var(--purple)">
+      <h2><span class="badge">j</span> Jump &amp; move</h2>
+      <p class="sub">flash.nvim (avy) · treesitter code motions</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>j</kbd><kbd>j</kbd></span><span class="act">Flash jump — label &amp; teleport</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>j</kbd><kbd>t</kbd></span><span class="act">Flash treesitter — select a scope</span></div>
+        <div class="row"><span class="keys"><kbd>]</kbd><kbd>m</kbd> / <kbd>[</kbd><kbd>m</kbd></span><span class="act">Next / prev function</span></div>
+        <div class="row"><span class="keys"><kbd>]</kbd><kbd>]</kbd> / <kbd>[</kbd><kbd>[</kbd></span><span class="act">Next / prev class</span></div>
+        <div class="row"><span class="keys"><kbd>]</kbd><kbd>M</kbd> · <kbd>]</kbd><kbd>[</kbd></span><span class="act"><span class="hint">…end variants of the above</span></span></div>
+      </div>
+    </div>
+
+    <!-- Text objects -->
+    <div class="card" style="--accent:var(--cyan)">
+      <h2><span class="badge">a i</span> Text objects</h2>
+      <p class="sub">Prefix with <kbd>v</kbd>/<kbd>c</kbd>/<kbd>d</kbd> — e.g. <kbd>v</kbd><kbd>a</kbd><kbd>f</kbd>, <kbd>c</kbd><kbd>i</kbd><kbd>f</kbd></p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd>a</kbd><kbd>f</kbd> / <kbd>i</kbd><kbd>f</kbd></span><span class="act">a / inner function</span></div>
+        <div class="row"><span class="keys"><kbd>a</kbd><kbd>c</kbd> / <kbd>i</kbd><kbd>c</kbd></span><span class="act">a / inner class</span></div>
+        <div class="row"><span class="keys"><kbd>a</kbd><kbd>a</kbd> / <kbd>i</kbd><kbd>a</kbd></span><span class="act">a / inner parameter (argument)</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>a</kbd> / <kbd class="lead">Spc</kbd><kbd>A</kbd></span><span class="act">Swap parameter next / prev</span></div>
+      </div>
+    </div>
+
+    <!-- Editing -->
+    <div class="card" style="--accent:var(--green)">
+      <h2><span class="badge">g y</span> Editing</h2>
+      <p class="sub">Comment · surround · pairs</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd>g</kbd><kbd>c</kbd><kbd>c</kbd></span><span class="act">Toggle line comment <span class="hint">· <kbd>g</kbd><kbd>c</kbd> range · <kbd>g</kbd><kbd>b</kbd><kbd>c</kbd> block</span></span></div>
+        <div class="row"><span class="keys"><kbd>y</kbd><kbd>s</kbd><kbd>{m}{c}</kbd></span><span class="act">Surround: add <span class="hint">(<kbd>S</kbd> in visual)</span></span></div>
+        <div class="row"><span class="keys"><kbd>c</kbd><kbd>s</kbd><kbd>{o}{n}</kbd></span><span class="act">Surround: change</span></div>
+        <div class="row"><span class="keys"><kbd>d</kbd><kbd>s</kbd><kbd>{c}</kbd></span><span class="act">Surround: delete</span></div>
+        <div class="row"><span class="keys"><kbd>Tab</kbd> / <kbd>⇧Tab</kbd></span><span class="act">Tab out of / back into a pair</span></div>
+        <div class="row"><span class="keys"><kbd>j</kbd><kbd>f</kbd></span><span class="act">Exit insert mode <span class="hint">(→ Esc)</span></span></div>
+      </div>
+    </div>
+
+    <!-- Terminal -->
+    <div class="card" style="--accent:var(--blue)">
+      <h2><span class="badge">'</span> Terminal</h2>
+      <p class="sub">Right-side split, opens in view mode</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>'</kbd></span><span class="act">Toggle terminal (right ⅓)</span></div>
+        <div class="row"><span class="keys"><kbd>i</kbd> · <kbd>j</kbd><kbd>f</kbd></span><span class="act">Start typing · back to view mode</span></div>
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>c</kbd><kbd>s</kbd></span><span class="act"><span class="hint">visual —</span> send selection to terminal</span></div>
+      </div>
+    </div>
+
+    <!-- Folds -->
+    <div class="card" style="--accent:var(--yellow)">
+      <h2><span class="badge">z</span> Folds</h2>
+      <p class="sub">Treesitter-driven — follow real code structure</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd>z</kbd><kbd>c</kbd> · <kbd>z</kbd><kbd>o</kbd> · <kbd>z</kbd><kbd>a</kbd></span><span class="act">Close · open · toggle fold</span></div>
+        <div class="row"><span class="keys"><kbd>z</kbd><kbd>R</kbd> / <kbd>z</kbd><kbd>M</kbd></span><span class="act">Open all / close all folds</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tip">💡 <b>Forgot a key?</b> Just press <kbd class="mono">Space</kbd> and wait — <b>which-key</b> pops up a live menu of every follow-up key with its description. This page is the offline mirror of it.</div>
+
+  <!-- ── Ambient features ────────────────────────────────────────────────── -->
+  <div class="sec-title">Always-on features</div>
+  <div class="ambient">
+    <div class="amb"><span class="n">Treesitter</span><span class="d">syntax-accurate highlighting</span></div>
+    <div class="amb"><span class="n">blink.cmp</span><span class="d">autocomplete · Tab to accept</span></div>
+    <div class="amb"><span class="n">autopairs</span><span class="d">auto-close ( [ { " '</span></div>
+    <div class="amb"><span class="n">rainbow-delimiters</span><span class="d">brackets colored by depth</span></div>
+    <div class="amb"><span class="n">indent-blankline</span><span class="d">scope line for the current block</span></div>
+    <div class="amb"><span class="n">colorizer</span><span class="d">inline swatches for color codes</span></div>
+    <div class="amb"><span class="n">gitsigns</span><span class="d">change markers in the gutter</span></div>
+    <div class="amb"><span class="n">fidget</span><span class="d">LSP progress in the corner</span></div>
+    <div class="amb"><span class="n">lualine</span><span class="d">themed statusline</span></div>
+    <div class="amb"><span class="n">bufferline</span><span class="d">buffer tabs up top</span></div>
+    <div class="amb"><span class="n">winbar</span><span class="d">per-split number + filename</span></div>
+    <div class="amb"><span class="n">cursorline</span><span class="d">highlights the current line</span></div>
+    <div class="amb"><span class="n">numbers</span><span class="d">hybrid relative + absolute</span></div>
+    <div class="amb"><span class="n">rounded floats</span><span class="d">darker bg, blue border</span></div>
+    <div class="amb"><span class="n">One Dark</span><span class="d">Zed-style colorscheme</span></div>
+    <div class="amb"><span class="n">vim-ledger</span><span class="d">accounting-journal support</span></div>
+  </div>
+
+  <footer class="mono">
+    <span>github.com/narley/neovim</span>
+    <span><a href="https://claude.ai/code/artifact/2fa63bdc-cde4-451b-9dbf-2fad281cad37">Live version ↗</a></span>
+    <span>Neovim 0.12 · nixvim flake · leader = Space</span>
+  </footer>
+</div>
+</body>
+</html>

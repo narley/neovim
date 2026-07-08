@@ -12,6 +12,16 @@
       options.desc = "Exit insert mode";
     }
     {
+      # Same `jf` in a :terminal — drop from terminal-insert mode to normal mode,
+      # replacing the awkward built-in <C-\><C-n>. Preferred over mapping <Esc>
+      # here, which would shadow the real Escape key for TUIs running inside the
+      # terminal (fzf, htop, less, lazygit, …).
+      mode = "t";
+      key = "jf";
+      action = "<C-\\><C-n>";
+      options.desc = "Exit terminal mode";
+    }
+    {
       # <Space>fs — save the current file. Since <Space>fsa also exists, this
       # waits 'timeoutlen' for a possible "a" before firing.
       mode = "n";

@@ -28,5 +28,6 @@
     ./comment.nix
     ./surround.nix
     ./tabout.nix
+    ./terminal.nix
   ];
 }

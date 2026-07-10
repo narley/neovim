@@ -21,6 +21,7 @@
     ./fidget.nix
     ./persistence.nix
     ./neogit.nix
+    ./lazygit.nix
     ./project.nix
     ./flash.nix
     ./colorizer.nix

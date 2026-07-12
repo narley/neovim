@@ -18,6 +18,23 @@
       # — handy for `V`-selecting a range of diff lines.
       disable_line_numbers = false;
       disable_relative_line_numbers = false;
+
+      # By default Neogit rebinds the digits and j/k in the status buffer, which
+      # breaks relative-number jumps like `2k`:
+      #   * 1-4 are Depth1-4 (fold the tree to that depth), so `2` folds instead
+      #     of starting a count;
+      #   * j/k are MoveDown/MoveUp (item-wise) and ignore counts.
+      # Disable those (false = fall back to native Vim) so counts + motions work
+      # normally. Folding is still available via <tab>/za/zo/zc/zC/zO; section &
+      # hunk jumps via {/} and <c-n>/<c-p>.
+      mappings.status = {
+        "1" = false;
+        "2" = false;
+        "3" = false;
+        "4" = false;
+        "j" = false;
+        "k" = false;
+      };
     };
   };
 

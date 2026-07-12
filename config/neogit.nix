@@ -13,6 +13,10 @@
       # Neogit; works here because all treesitter grammars are installed.
       treesitter_diff_highlight = true;
 
+      # Neogit tints the diff section the cursor is in (a dark background block)
+      # based on cursor position. Turn that off — plain background, no block tint.
+      disable_context_highlighting = true;
+
       # Neogit hides line numbers in its buffers by default. Turn them back on to
       # match the editor's hybrid numbering (options.nix: number + relativenumber)
       # — handy for `V`-selecting a range of diff lines.

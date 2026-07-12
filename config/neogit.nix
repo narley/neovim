@@ -7,10 +7,18 @@
   # 3-way merge-conflict resolution).
   plugins.neogit = {
     enable = true;
-    # Syntax-highlight the code inside diff hunks (per the file's language) via
-    # treesitter, instead of showing them as plain +/- text. Off by default in
-    # Neogit; works here because all treesitter grammars are installed.
-    settings.treesitter_diff_highlight = true;
+    settings = {
+      # Syntax-highlight the code inside diff hunks (per the file's language) via
+      # treesitter, instead of showing them as plain +/- text. Off by default in
+      # Neogit; works here because all treesitter grammars are installed.
+      treesitter_diff_highlight = true;
+
+      # Neogit hides line numbers in its buffers by default. Turn them back on to
+      # match the editor's hybrid numbering (options.nix: number + relativenumber)
+      # — handy for `V`-selecting a range of diff lines.
+      disable_line_numbers = false;
+      disable_relative_line_numbers = false;
+    };
   };
 
   # diffview.nvim — the diff / merge-conflict UI Neogit opens when you view a

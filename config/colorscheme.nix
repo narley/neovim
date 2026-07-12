@@ -20,6 +20,11 @@
   };
   extraConfigLua = ''
     vim.cmd.colorscheme("kanagawa-wave")
+
+    -- Kanagawa colours WinSeparator (#16161d) almost identically to our Normal
+    -- background (#181616), so the split divider is invisible. Repaint it with a
+    -- clearly visible grey (sumiInk6) so code/terminal splits have a border.
+    vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#54546d" })
   '';
 
   # --- Previous theme: One Dark (navarasu/onedark.nvim), disabled ---

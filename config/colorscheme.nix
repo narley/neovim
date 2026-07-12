@@ -1,25 +1,36 @@
+{ pkgs, ... }:
 {
-  # One Dark (navarasu/onedark.nvim) — the classic #282c34 One Dark palette that
-  # Zed's default dark theme is based on. `style = "dark"` is the closest match
-  # to Zed; other styles: "darker", "cool", "deep", "warm", "warmer", "light".
+  # --- Currently trying: One Dark Vaporwave (olimorris/onedarkpro.nvim) ---
+  # onedarkpro.nvim registers several colorschemes (onedark, onelight,
+  # onedark_vivid, onedark_dark, vaporwave). "vaporwave" is the neon
+  # pink/purple/cyan One Dark variant. It's the Lua theme, so Treesitter
+  # (@capture) groups are defined and code stays richly highlighted.
+  #
+  # Applied manually (setup + colorscheme) rather than via the colorschemes.*
+  # module so there's no ambiguity about which registered theme is active.
+  #
+  # To go back to One Dark: remove the extraPlugins/extraConfigLua below and flip
+  # the onedark block back to enable = true.
+  extraPlugins = [ pkgs.vimPlugins.onedarkpro-nvim ];
+  extraConfigLua = ''
+    require("onedarkpro").setup({})
+    vim.cmd.colorscheme("vaporwave")
+  '';
+
+  # --- Previous theme: One Dark (navarasu/onedark.nvim), disabled ---
+  # Kept here so switching back is a one-line change. The highlights below use
+  # onedark palette refs ($bg_d/$blue) and only apply when this block is enabled.
   colorschemes.onedark = {
-    enable = true;
+    enable = false;
     settings = {
       style = "dark";
       transparent = false;
       term_colors = true;
 
-      # Zed italicises comments — match that. Per-token style, each of:
-      # "none" | "italic" | "bold" | "underline" (combinable with ",").
       code_style = {
         comments = "italic";
       };
 
-      # Make floating windows (LSP hover/`K`, diagnostic floats) stand out from
-      # the editor: give their body the palette's darker background (`bg_d`,
-      # #21252b vs the editor's #282c34) and their border a blue tint. The `$`
-      # values are onedark palette references, so they stay correct if `style`
-      # changes above. Combined with `winborder = "rounded"` in options.nix.
       highlights = {
         NormalFloat = {
           bg = "$bg_d";

@@ -1,6 +1,6 @@
 {
   # A terminal you toggle open as a vertical split pinned to the far right,
-  # sized to a third of the editor width — unlike `:term`, which replaces the
+  # sized to half of the editor width — unlike `:term`, which replaces the
   # current window. <Space>' opens it in normal ("view") mode, so you can scroll
   # the output straight away; press `i` (or `a`) to start typing. <Space>' again
   # hides the split, and once more brings the SAME shell back (the buffer is
@@ -23,10 +23,10 @@
         return
       end
 
-      -- Open a vertical split forced to the far right, then size it to ~1/3.
+      -- Open a vertical split forced to the far right, then size it to ~1/2.
       vim.cmd("botright vsplit")
       term.win = vim.api.nvim_get_current_win()
-      vim.cmd("vertical resize " .. math.floor(vim.o.columns / 3))
+      vim.cmd("vertical resize " .. math.floor(vim.o.columns / 2))
 
       -- Reuse the previous terminal buffer if it's still around; else spawn one.
       if term.buf and vim.api.nvim_buf_is_valid(term.buf) then
@@ -42,7 +42,7 @@
       vim.cmd("stopinsert")
     end
 
-    vim.keymap.set("n", "<leader>'", toggle_term, { desc = "Toggle terminal (right 1/3)" })
+    vim.keymap.set("n", "<leader>'", toggle_term, { desc = "Toggle terminal (right 1/2)" })
 
     -- ── Send a visual selection into the terminal (Warp-style) ──────────────
     -- Find the job channel of a terminal buffer, preferring one that's visible

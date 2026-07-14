@@ -10,6 +10,17 @@
       # Take over from netrw as the default file explorer (oil's default).
       default_file_explorer = true;
       view_options.show_hidden = true; # show dotfiles; set false to hide
+
+      # `q` closes oil, alongside its built-in <C-c>. Oil merges user keymaps
+      # into its defaults key-by-key while use_default_keymaps stays true, so
+      # `-`, <CR> and the rest survive this.
+      #
+      # `mode = "n"` is not optional: oil hands an unset mode to vim.keymap.set
+      # as "", which would also claim `q` in visual, select and operator-pending.
+      keymaps."q" = {
+        "__unkeyed-1" = "actions.close";
+        mode = "n";
+      };
     };
   };
 

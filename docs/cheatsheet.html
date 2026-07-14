@@ -327,7 +327,7 @@
       <span class="tag"><b>leader</b> = Space</span>
       <span class="tag"><b>theme</b> One Dark</span>
       <span class="tag"><b>built with</b> nixvim</span>
-      <span class="tag">28 modules</span>
+      <span class="tag">30 modules</span>
     </div>
   </header>
 
@@ -344,6 +344,7 @@
     <div class="prefix" style="--accent:var(--yellow)"> <span class="glyph">r</span><span class="lbl"><span class="k">Spc r</span><span class="v">Rename</span></span></div>
     <div class="prefix" style="--accent:var(--red)">    <span class="glyph">x</span><span class="lbl"><span class="k">Spc x</span><span class="v">Trouble</span></span></div>
     <div class="prefix" style="--accent:var(--purple)"> <span class="glyph">j</span><span class="lbl"><span class="k">Spc j</span><span class="v">Jump</span></span></div>
+    <div class="prefix" style="--accent:var(--green)">  <span class="glyph">m</span><span class="lbl"><span class="k">Spc m</span><span class="v">Markdown render</span></span></div>
     <div class="prefix" style="--accent:var(--blue)">   <span class="glyph">'</span><span class="lbl"><span class="k">Spc '</span><span class="v">Terminal</span></span></div>
     <div class="prefix" style="--accent:var(--blue)">   <span class="glyph">/</span><span class="lbl"><span class="k">Spc /</span><span class="v">Grep</span></span></div>
   </div>
@@ -355,7 +356,7 @@
     <!-- Files / Find -->
     <div class="card" style="--accent:var(--blue)">
       <h2><span class="badge">f</span> Files &amp; Find</h2>
-      <p class="sub">Telescope pickers, saving, file tree</p>
+      <p class="sub">Telescope pickers &amp; saving <span class="hint">— files on disk: see Oil</span></p>
       <div class="rows">
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>f</kbd></span><span class="act">Find files</span></div>
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>g</kbd></span><span class="act">Live grep <span class="hint">— also <kbd class="lead">Spc</kbd> <kbd>/</kbd></span></span></div>
@@ -364,7 +365,22 @@
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>h</kbd></span><span class="act">Help tags</span></div>
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>p</kbd></span><span class="act">Switch project</span></div>
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>s</kbd></span><span class="act">Save file <span class="hint">· <kbd class="lead">Spc</kbd><kbd>f</kbd><kbd>s</kbd><kbd>a</kbd> save all</span></span></div>
-        <div class="row"><span class="keys"><kbd>-</kbd></span><span class="act">File explorer (Oil) — edit &amp; <kbd>:w</kbd></span></div>
+      </div>
+    </div>
+
+    <!-- Oil / files on disk -->
+    <div class="card" style="--accent:var(--blue)">
+      <h2><span class="badge">-</span> Files on disk (Oil)</h2>
+      <p class="sub">A directory as an editable buffer — no sidebar tree</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd>-</kbd></span><span class="act">Open parent directory <span class="hint">— again to keep climbing</span></span></div>
+        <div class="row"><span class="keys"><kbd>Enter</kbd></span><span class="act">Open file · enter directory</span></div>
+        <div class="row"><span class="keys"><kbd>q</kbd> · <kbd>Ctrl</kbd><kbd>c</kbd></span><span class="act">Close, restore previous buffer</span></div>
+        <div class="row"><span class="keys"><kbd>:</kbd><kbd>w</kbd></span><span class="act">Apply edits to disk <span class="hint">— asks to confirm</span></span></div>
+        <div class="row"><span class="keys"><kbd>d</kbd><kbd>d</kbd> · <kbd>p</kbd></span><span class="act">Delete · move <span class="hint">(cut here, paste in another dir)</span></span></div>
+        <div class="row"><span class="keys"><kbd>g</kbd><kbd>?</kbd></span><span class="act">Show every Oil key</span></div>
+        <div class="row"><span class="keys"><kbd>g</kbd><kbd>.</kbd></span><span class="act">Toggle hidden files <span class="hint">(on by default here)</span></span></div>
+        <div class="row"><span class="keys"><kbd>Ctrl</kbd><kbd>p</kbd></span><span class="act">Preview the entry under the cursor</span></div>
       </div>
     </div>
 
@@ -493,6 +509,17 @@
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>'</kbd></span><span class="act">Toggle terminal (right ⅓)</span></div>
         <div class="row"><span class="keys"><kbd>i</kbd> · <kbd>j</kbd><kbd>f</kbd></span><span class="act">Start typing · back to view mode</span></div>
         <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>c</kbd><kbd>s</kbd></span><span class="act"><span class="hint">visual —</span> send selection to terminal</span></div>
+      </div>
+    </div>
+
+    <!-- Markdown -->
+    <div class="card" style="--accent:var(--green)">
+      <h2><span class="badge">m</span> Markdown</h2>
+      <p class="sub">render-markdown.nvim — starts raw, toggle to render</p>
+      <div class="rows">
+        <div class="row"><span class="keys"><kbd class="lead">Spc</kbd><kbd>m</kbd></span><span class="act">Toggle rendered view <span class="hint">— per buffer</span></span></div>
+        <div class="row"><span class="keys"><span class="hint">renders</span></span><span class="act">Headings, code blocks, bullets, checkboxes, tables, callouts</span></div>
+        <div class="row"><span class="keys"><span class="hint">cursor line</span></span><span class="act">De-renders to raw markup so you can edit in place</span></div>
       </div>
     </div>
 

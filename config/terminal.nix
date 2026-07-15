@@ -12,7 +12,9 @@
   #
   # <Space>cs in visual mode sends the selected lines into whatever is running
   # in the terminal — e.g. paste a block straight into Claude Code's input box,
-  # Warp-style — then focuses the terminal so you can type your prompt.
+  # Warp-style — then focuses the terminal so you can type your prompt. The
+  # block is headed with `/abs/path.ts:23-30` so the receiver knows what it's
+  # looking at without being told.
   extraConfigLua = ''
     local term = { buf = nil, win = nil }
 
@@ -66,12 +68,25 @@
     end
 
     vim.keymap.set("x", "<leader>cs", function()
-      local lines = vim.fn.getregion(vim.fn.getpos("v"), vim.fn.getpos("."), { type = vim.fn.mode() })
+      local vpos, cpos = vim.fn.getpos("v"), vim.fn.getpos(".")
+      local lines = vim.fn.getregion(vpos, cpos, { type = vim.fn.mode() })
       local job, win = terminal_job()
       if not job then
         vim.notify("No terminal found — open one with <Space>' first.", vim.log.levels.WARN)
         return
       end
+
+      -- Head the block with `path:first-last` (or `path:n` for a single line) so
+      -- the receiver knows where the code came from and can open or edit it.
+      -- A selection can be made bottom-up, in which case the cursor is *above*
+      -- the anchor — sort the two ends rather than trusting their order.
+      -- An unsaved buffer has no path; say so explicitly instead of emitting a
+      -- bare `:23-30` with nothing in front of it.
+      local first = math.min(vpos[2], cpos[2])
+      local last = math.max(vpos[2], cpos[2])
+      local path = vim.fn.expand("%:p")
+      if path == "" then path = "[No Name]" end
+      local header = path .. ":" .. (first == last and tostring(first) or (first .. "-" .. last))
 
       -- Paste the raw selection into the terminal. Newlines go out as CR — what
       -- pressing Enter sends. Claude Code detects the block as a paste on its
@@ -82,7 +97,7 @@
       -- program consumes the markers; Claude Code renders them as literal
       -- `[200~…[201~` text if it doesn't — which is why it's off by default.
       local bracketed = false
-      local text = table.concat(lines, "\r")
+      local text = header .. "\r" .. table.concat(lines, "\r")
       if bracketed then
         local ESC = "\27"
         text = ESC .. "[200~" .. text .. ESC .. "[201~"
@@ -98,7 +113,7 @@
           vim.cmd("startinsert")
         end)
       end
-    end, { desc = "Send selection to terminal (Claude Code)" })
+    end, { desc = "Send selection + path:lines to terminal (Claude Code)" })
 
     -- Terminal windows read better without line numbers, the cursorline or the
     -- sign column — strip those for any :terminal buffer. The winbar is left on

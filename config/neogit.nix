@@ -8,6 +8,13 @@
   plugins.neogit = {
     enable = true;
     settings = {
+      # Open the status buffer as a vertical split sharing the screen with the
+      # windows already open, rather than Neogit's default `kind = "tab"` — a
+      # new tab, which is why it used to fill the width. 'equalalways' (on by
+      # default) then gives every window an equal share: 1/2 next to a lone
+      # buffer, 1/3 once another opens, and so on.
+      kind = "vsplit";
+
       # Syntax-highlight the code inside diff hunks (per the file's language) via
       # treesitter, instead of showing them as plain +/- text. Off by default in
       # Neogit; works here because all treesitter grammars are installed.

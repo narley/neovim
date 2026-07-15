@@ -45,6 +45,16 @@
         "4" = false;
         "j" = false;
         "k" = false;
+
+        # <cr> defaults to "GoToFile", which *closes* Neogit and then edits the
+        # file in whatever window is left — so the status buffer vanishes the
+        # moment you open something. "VSplitOpen" (normally <c-v>) opens a
+        # vertical split and leaves Neogit alone. With splitright on
+        # (options.nix) the new window lands directly right of Neogit, so
+        # (neogit, file-A) becomes (neogit, file-B, file-A).
+        #
+        # <c-v> still does the same thing; this just makes it the default press.
+        "<cr>" = "VSplitOpen";
       };
     };
   };

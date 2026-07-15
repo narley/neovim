@@ -35,6 +35,14 @@
   # winbar is what carries per-split identity here.
   opts.winbar = " %{winnr()}  %t %m";
 
+  # A bare `:vsplit` puts the new window on the *left* by default, which reads
+  # backwards and is why <leader>w/ has to spell out `rightbelow`. Flip it so
+  # new vertical splits open to the right of the current window — including the
+  # ones plugins make on our behalf, which is what puts a file opened from
+  # Neogit's status to the right of Neogit rather than to its left.
+  # Explicit `rightbelow`/`botright` splits elsewhere are unaffected.
+  opts.splitright = true;
+
   # Folding driven by treesitter, so folds follow real code structure
   # (functions, blocks, tables) rather than indentation. `zc` closes the fold
   # under the cursor, `zo` opens it, `za` toggles; `zR` opens all, `zM` closes

@@ -83,6 +83,16 @@
       action = "<cmd>close<cr>";
       options.desc = "Close window";
     }
+    {
+      # <Space>w= — give every window an equal share again (Spacemacs'
+      # `SPC w =`, balance-windows-area). 'equalalways' already does this when
+      # windows open or close, so this is for putting things back after a
+      # manual resize or a plugin that sized its own split.
+      mode = "n";
+      key = "<leader>w=";
+      action = "<C-w>=";
+      options.desc = "Balance windows";
+    }
 
     # Move the current window to the far left / bottom / top / right.
     {

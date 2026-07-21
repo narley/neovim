@@ -49,6 +49,46 @@
       end
       return base_notify(msg, level, opts)
     end
+
+    -- Guard against a stack overflow in project.nvim 3.3.1 (E5108, raised from
+    -- any BufEnter) when a project directory disappears while Neovim is running.
+    --
+    -- get_recent_projects() copies the project list, drops paths that no longer
+    -- exist from that *copy*, sets removed = true, and calls write_history() —
+    -- which calls get_recent_projects() again. Because the copy is discarded,
+    -- M.recent_projects still holds the dead path, so the next pass removes it
+    -- again, and the two recurse until the stack blows. BufEnter runs that chain
+    -- via on_buf_enter, so a single deleted project poisons every buffer switch.
+    --
+    -- Loading is not the problem: read_history() honours `remove_missing_dirs`
+    -- (true by default) and filters missing directories then. The gap is a
+    -- directory removed *after* that — deleted, renamed, moved, a worktree torn
+    -- down, an unmounted volume.
+    --
+    -- So prune the persistent lists in place before each call. With the dead
+    -- entries actually gone, `removed` stays false and the recursion never
+    -- starts. Same filesystem test the plugin itself applies.
+    local ok, History = pcall(require, "project.util.history")
+    if ok and type(History.get_recent_projects) == "function" then
+      local base_get_recent = History.get_recent_projects
+      History.get_recent_projects = function(...)
+        for _, list in ipairs({ History.recent_projects, History.session_projects }) do
+          if type(list) == "table" then
+            -- Backwards: table.remove() shifts everything after the index.
+            for i = #list, 1, -1 do
+              -- Entries are { path, name }, or bare strings in the old format.
+              local entry = list[i]
+              local path = type(entry) == "table" and entry.path or entry
+              local dir = type(path) == "string" and vim.uv.fs_stat(path) or nil
+              if not (dir and dir.type == "directory") then
+                table.remove(list, i)
+              end
+            end
+          end
+        end
+        return base_get_recent(...)
+      end
+    end
   '';
 
   # <Space>fp — switch project (Spacemacs' SPC p p). Fits the <leader>f* family

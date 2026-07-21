@@ -60,39 +60,51 @@
     };
 
     # Buffer-local keymaps, active once a server attaches.
+    #
+    # Every one carries a `desc`: which-key builds its popup labels from it, so
+    # without one an entry shows up as a bare key with nothing beside it (which
+    # is what `<Space>e` used to look like).
     keymaps = [
       {
         key = "gd";
         lspBufAction = "definition";
+        options.desc = "Go to definition";
       }
       {
         key = "gD";
         lspBufAction = "references";
+        options.desc = "Find references";
       }
       {
         key = "K";
         lspBufAction = "hover";
+        options.desc = "Hover docs";
       }
       {
         key = "<leader>rn";
         lspBufAction = "rename";
+        options.desc = "Rename symbol";
       }
       {
         # Apply a code action — this is how you run an ESLint autofix.
         key = "<leader>ca";
         lspBufAction = "code_action";
+        options.desc = "Code action (ESLint autofix)";
       }
       {
         key = "<leader>e";
         action = lib.nixvim.mkRaw "function() vim.diagnostic.open_float() end";
+        options.desc = "Line diagnostics float";
       }
       {
         key = "[d";
         action = lib.nixvim.mkRaw "function() vim.diagnostic.jump({ count = -1, float = true }) end";
+        options.desc = "Previous diagnostic";
       }
       {
         key = "]d";
         action = lib.nixvim.mkRaw "function() vim.diagnostic.jump({ count = 1, float = true }) end";
+        options.desc = "Next diagnostic";
       }
     ];
   };

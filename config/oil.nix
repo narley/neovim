@@ -26,12 +26,18 @@
 
   # oil's signature keybind: open the parent directory as an editable buffer.
   # Edit lines to rename/move/create/delete files, then `:w` to apply.
+  #
+  # `--float` opens it in a centred floating window (rounded border, padding 2
+  # — the `float` block in settings above, left at oil's defaults) instead of
+  # taking over the current window. `q`/<C-c> close the float; `-` inside it
+  # still climbs to the parent, and `<CR>` opens the file in the window that
+  # was focused before the float.
   keymaps = [
     {
       mode = "n";
       key = "-";
-      action = "<cmd>Oil<cr>";
-      options.desc = "Open parent directory (Oil)";
+      action = "<cmd>Oil --float<cr>";
+      options.desc = "Open parent directory (Oil, float)";
     }
   ];
 }

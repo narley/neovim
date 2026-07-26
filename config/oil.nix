@@ -11,6 +11,15 @@
       default_file_explorer = true;
       view_options.show_hidden = true; # show dotfiles; set false to hide
 
+      # Size the floating window (opened via `-`, see keymap below). Oil's
+      # default max_width/max_height of 0 means "unlimited", so the float fills
+      # the whole screen. Values between 0 and 1 are a fraction of the editor;
+      # use absolute integers instead if you prefer fixed columns/rows.
+      float = {
+        max_width = 0.5; # 50% of editor width
+        max_height = 0.7; # 70% of editor height
+      };
+
       # `q` closes oil, alongside its built-in <C-c>. Oil merges user keymaps
       # into its defaults key-by-key while use_default_keymaps stays true, so
       # `-`, <CR> and the rest survive this.
@@ -27,16 +36,18 @@
   # oil's signature keybind: open the parent directory as an editable buffer.
   # Edit lines to rename/move/create/delete files, then `:w` to apply.
   #
-  # `--float` opens it in a centred floating window (rounded border, padding 2
-  # — the `float` block in settings above, left at oil's defaults) instead of
-  # taking over the current window. `q`/<C-c> close the float; `-` inside it
-  # still climbs to the parent, and `<CR>` opens the file in the window that
-  # was focused before the float.
+  # Floating is only exposed through oil's Lua API, not the `:Oil` command —
+  # `:Oil --float` doesn't work because the command parses `--float` as a
+  # directory name and opens in the current window instead. `open_float()`
+  # opens a centred floating window using the `float` config (oil's defaults:
+  # rounded border, padding 2). `q`/<C-c> close the float; `-` inside it still
+  # climbs to the parent, and `<CR>` opens the file in the previously focused
+  # window.
   keymaps = [
     {
       mode = "n";
       key = "-";
-      action = "<cmd>Oil --float<cr>";
+      action.__raw = "function() require('oil').open_float() end";
       options.desc = "Open parent directory (Oil, float)";
     }
   ];

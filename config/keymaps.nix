@@ -120,11 +120,66 @@
       options.desc = "Move window right";
     }
 
-    # Close the current buffer.
+    # Close the current buffer, keeping the window layout.
+    #
+    # Plain `:bdelete` *closes every window showing the buffer* (unless it's the
+    # last one), so with Neogit or any other split open next to it, deleting a
+    # buffer takes the whole editing window with it and the neighbour expands to
+    # fill the tab. That is rarely what you want when several buffers live in one
+    # window — the bufferline tab bar implies "close this tab, show the next".
+    #
+    # So: point every window showing the buffer at something else first — the
+    # alternate buffer (#, i.e. where you just came from), else the previous
+    # listed one, else a fresh empty buffer — and only then delete it. Modified
+    # buffers still refuse to close with the native E89, same as before.
     {
       mode = "n";
       key = "<leader>bd";
-      action = "<cmd>bdelete<cr>";
+      action.__raw = ''
+        function()
+          local buf = vim.api.nvim_get_current_buf()
+
+          -- Report a refusal (E89 on unsaved changes, E947 on a live terminal)
+          -- the way :bdelete would, without Lua's E5108 wrapper and traceback.
+          local function report(err)
+            vim.api.nvim_echo({ { tostring(err):gsub("^.*Vim[^:]*:", ""), "ErrorMsg" } }, true, {})
+          end
+
+          if vim.bo[buf].modified then
+            local ok, err = pcall(vim.cmd.bdelete)
+            if not ok then
+              report(err)
+            end
+            return
+          end
+
+          for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+            vim.api.nvim_win_call(win, function()
+              if vim.api.nvim_win_get_buf(win) ~= buf then
+                return
+              end
+
+              local alt = vim.fn.bufnr("#")
+              if alt ~= -1 and alt ~= buf and vim.fn.buflisted(alt) == 1 then
+                vim.api.nvim_win_set_buf(win, alt)
+                return
+              end
+
+              pcall(vim.cmd, "bprevious")
+              if vim.api.nvim_win_get_buf(win) == buf then
+                vim.api.nvim_win_set_buf(win, vim.api.nvim_create_buf(true, false))
+              end
+            end)
+          end
+
+          if vim.api.nvim_buf_is_valid(buf) then
+            local ok, err = pcall(vim.api.nvim_buf_delete, buf, {})
+            if not ok then
+              report(err)
+            end
+          end
+        end
+      '';
       options.desc = "Close buffer";
     }
 

@@ -48,13 +48,79 @@
 
         # <cr> defaults to "GoToFile", which *closes* Neogit and then edits the
         # file in whatever window is left — so the status buffer vanishes the
-        # moment you open something. "VSplitOpen" (normally <c-v>) opens a
-        # vertical split and leaves Neogit alone. With splitright on
-        # (options.nix) the new window lands directly right of Neogit, so
-        # (neogit, file-A) becomes (neogit, file-B, file-A).
+        # moment you open something. "VSplitOpen" keeps Neogit but always adds
+        # a window, so browsing a handful of files leaves the tab shredded into
+        # slivers.
         #
-        # <c-v> still does the same thing; this just makes it the default press.
-        "<cr>" = "VSplitOpen";
+        # Neogit accepts a function here (config.lua validates status mappings
+        # as string | boolean | function), so <cr> reuses a window instead:
+        #   1. the window already showing that file, if any;
+        #   2. otherwise the window we came from (winnr("#")), i.e. the editing
+        #      window Neogit was opened from;
+        #   3. otherwise any other ordinary window in the tab;
+        #   4. only when none exists — Neogit alone in the tab — a vsplit.
+        # Neogit stays open either way. <c-v>/<c-x>/<c-t> still force a
+        # vsplit/split/tab when a new window *is* what you want.
+        "<cr>".__raw = ''
+          function()
+            local status = require("neogit.buffers.status").instance()
+            local item = status and status.buffer.ui:get_item_under_cursor()
+            if not (item and item.absolute_path) then
+              return
+            end
+
+            local path = item.absolute_path
+            local jump = require("neogit.lib.jump")
+
+            -- Pressing <cr> on a diff line lands on that line in the file;
+            -- this mirrors Neogit's own (file-local) translate_cursor_location.
+            local cursor
+            if rawget(item, "diff") then
+              local line = status.buffer:cursor_line()
+              for _, hunk in ipairs(item.diff.hunks) do
+                if line >= hunk.first and line <= hunk.last then
+                  cursor = { jump.adjust_row(hunk.disk_from, line - hunk.first, hunk.lines, "-"), 0 }
+                  break
+                end
+              end
+            end
+
+            -- An "ordinary" window: not floating, holding a real file buffer
+            -- (buftype "" rules out terminals, quickfix, help, oil, …) and not
+            -- one of Neogit's own (NeogitStatus, NeogitPopup, …).
+            local function ordinary(win)
+              if vim.api.nvim_win_get_config(win).relative ~= "" then
+                return false
+              end
+
+              local buf = vim.api.nvim_win_get_buf(win)
+              return vim.bo[buf].buftype == ""
+                and not vim.startswith(vim.bo[buf].filetype, "Neogit")
+            end
+
+            local previous = vim.fn.win_getid(vim.fn.winnr("#"))
+            local target
+            for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+              if ordinary(win) then
+                if vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win)) == path then
+                  target = win
+                  break
+                elseif win == previous then
+                  target = win
+                elseif not target then
+                  target = win
+                end
+              end
+            end
+
+            if target then
+              vim.api.nvim_set_current_win(target)
+              jump.open("edit", path, cursor, "[Status - Open]")
+            else
+              jump.open("vsplit", path, cursor, "[Status - Open]")
+            end
+          end
+        '';
       };
     };
   };

@@ -16,6 +16,11 @@
     settings = {
       theme = "wave";
       colors.theme.wave.ui.bg = "#181616";
+      # Wave's selection colour is waveBlue1 (#223249), tuned against wave's own
+      # #1f1f28 background. Against dragon's darker #181616 above it barely
+      # registers, so selections (visual, visual block) are hard to see. Use
+      # kanagawa's brighter waveBlue2 instead.
+      colors.theme.wave.ui.bg_visual = "#2D4F67";
     };
   };
   extraConfigLua = ''

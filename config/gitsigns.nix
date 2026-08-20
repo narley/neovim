@@ -37,7 +37,7 @@
     }
     {
       mode = "n";
-      key = "<leader>hb";
+      key = "<leader>gb";
       action = "<cmd>Gitsigns blame_line<cr>";
       options.desc = "Blame line";
     }

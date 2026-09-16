@@ -19,6 +19,19 @@
     enableTelescope = true;
   };
 
+  # v2 emits a SWITCH event on change but ships *no* registered hooks, so a bare
+  # switch only runs `cd` + `clearjumps` and leaves open buffers (and Oil) still
+  # pointing at the old worktree. Register the plugin's built-in switch hook so
+  # the focused buffer follows into the new worktree — repointed to the matching
+  # file there, or falling back to `update_on_change_command` (default `e .`,
+  # i.e. open the new root) when the file has no counterpart.
+  extraConfigLua = ''
+    local ok, hooks = pcall(require, "git-worktree.hooks")
+    if ok then
+      hooks.register(hooks.type.SWITCH, hooks.builtins.update_current_buffer_on_switch)
+    end
+  '';
+
   # <Space>gw — Telescope list of worktrees. <Enter> switches (nvim's cwd
   #   follows). In the picker: <M-c> create · <M-d> delete · <C-f> toggle force
   #   on the next delete.

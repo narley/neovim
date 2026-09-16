@@ -22,6 +22,7 @@
     ./persistence.nix
     ./neogit.nix
     ./lazygit.nix
+    ./git-worktree.nix
     ./render-markdown.nix
     ./project.nix
     ./flash.nix

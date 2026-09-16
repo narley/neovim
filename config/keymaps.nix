@@ -36,6 +36,23 @@
       action = "<cmd>wa<cr>";
       options.desc = "Save all files";
     }
+    {
+      # <Space>fy — copy the current file's absolute path to the system clipboard
+      # (and echo it). `:pwd` reports the project cwd, not the open file, so this
+      # is the quick "what/where is this file" answer. `expand('%:p')` is the full
+      # path; the `+` register is the system clipboard.
+      mode = "n";
+      key = "<leader>fy";
+      action = "<cmd>let @+ = expand('%:p') | echo @+<cr>";
+      options.desc = "Yank file path (absolute)";
+    }
+    {
+      # <Space>fY — same, but the path relative to the cwd (project root here).
+      mode = "n";
+      key = "<leader>fY";
+      action = "<cmd>let @+ = expand('%') | echo @+<cr>";
+      options.desc = "Yank file path (relative)";
+    }
 
     # Window navigation — move the cursor between splits.
     {

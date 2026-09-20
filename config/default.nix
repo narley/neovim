@@ -3,6 +3,7 @@
   imports = [
     ./options.nix
     ./keymaps.nix
+    ./startup.nix
     ./completion.nix
     ./bufferline.nix
     ./ledger.nix

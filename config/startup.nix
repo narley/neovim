@@ -9,41 +9,40 @@
   # last session (see persistence.nix), and `nvim file` still just opens the
   # file. Piping in via stdin (`… | nvim`) is left alone.
   #
-  # Timing: Oil loads the directory buffer *asynchronously* and finishes after
-  # VimEnter, grabbing window focus when it does. Opening the picker on a bare
-  # VimEnter schedule races that — Telescope auto-closes the moment Oil steals
-  # focus, so you'd see only Oil. Instead we wait for Oil's own "rendered" signal
-  # (its `User OilEnter` event, which fires after the async load) and open the
-  # finder then, so it floats on top and stays. `once = true` scopes it to this
-  # startup render — later `-` opens don't re-trigger it.
+  # We trigger off Oil's own `User OilEnter` event (fired once its async render
+  # finishes) rather than VimEnter, for two reasons this took a couple of tries
+  # to pin down:
+  #   1. Oil loads the directory buffer asynchronously; a bare VimEnter schedule
+  #      races that and the picker gets closed when Oil grabs focus.
+  #   2. By the time anything runs, Oil has rewritten the sole arglist entry from
+  #      the directory to its own `oil://…` URL — so `isdirectory(argv(0))` is
+  #      false. We detect the `oil://` arg instead and ask Oil for the real path.
+  # `once = true` scopes it to the startup render; later `-` opens don't retrigger.
   extraConfigLua = ''
-    vim.api.nvim_create_autocmd("VimEnter", {
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "OilEnter",
+      once = true,
       desc = "On `nvim <dir>`, float a file finder over Oil",
-      nested = true,
-      callback = function()
+      callback = function(args)
         -- Single directory argument only. `vim.g.started_with_stdin` is set by
-        -- persistence.nix's StdinReadPre autocmd, which fires before VimEnter.
+        -- persistence.nix's StdinReadPre autocmd.
         if vim.fn.argc(-1) ~= 1 or vim.g.started_with_stdin then
           return
         end
-        local arg = vim.fn.argv(0)
-        if vim.fn.isdirectory(arg) ~= 1 then
+        local a0 = vim.fn.argv(0)
+        if not (a0:match("^oil://") or vim.fn.isdirectory(a0) == 1) then
           return
         end
-        local dir = vim.fn.fnamemodify(arg, ":p")
-        -- Root the session at the project dir so the finder (and later grep)
-        -- searches there.
+        -- The just-entered Oil buffer's real directory (nil for remote adapters).
+        local dir = require("oil").get_current_dir(args.data and args.data.buf)
+        if not dir then
+          return
+        end
+        -- Root the session there so the finder (and later grep) searches it.
         pcall(vim.cmd.cd, dir)
-        -- Open the finder once Oil reports the startup buffer is rendered.
-        vim.api.nvim_create_autocmd("User", {
-          pattern = "OilEnter",
-          once = true,
-          callback = function()
-            vim.schedule(function()
-              require("telescope.builtin").find_files({ cwd = dir })
-            end)
-          end,
-        })
+        vim.schedule(function()
+          require("telescope.builtin").find_files({ cwd = dir })
+        end)
       end,
     })
   '';

@@ -9,22 +9,26 @@
   # last session (see persistence.nix), and `nvim file` still just opens the
   # file. Piping in via stdin (`… | nvim`) is left alone.
   #
-  # Two subtleties this took a few tries to get right:
-  #   1. Oil loads the directory buffer asynchronously and grabs focus when it
-  #      finishes — after VimEnter. So we open the finder on Oil's own
-  #      `User OilEnter` event (fired post-render) rather than racing it.
-  #   2. We decide whether this is a `nvim <dir>` launch *at config-load time*,
+  # Subtleties this took a few iterations to nail down:
+  #   1. Whether this is a `nvim <dir>` launch is decided at config-load time,
   #      before persistence.nvim restores a session on VimEnter. A restored
   #      session re-adds its buffers to the arglist (mksession writes
-  #      `$argadd oil://…/`), so reading argc/argv at OilEnter time would make the
-  #      first `-` in a resumed session look exactly like `nvim <dir>` and wrongly
-  #      pop the finder. Capturing the launch intent up front avoids that — the
-  #      listener is only armed for a genuine directory launch.
+  #      `$argadd oil://…/`), so checking argc/argv later would make the first
+  #      `-` in a resumed session look like a directory launch and wrongly pop
+  #      the finder. Capturing up front avoids that.
+  #   2. At load time the sole arg may be a plain dir ("." ) or already Oil's
+  #      `oil://…` URL, so we accept either.
+  #   3. Oil loads the directory buffer asynchronously and grabs focus after
+  #      VimEnter, so we open the finder on Oil's own `User OilEnter` event
+  #      (fired post-render) rather than racing it. `once = true` scopes it to
+  #      the startup render.
   extraConfigLua = ''
-    if vim.fn.argc(-1) == 1
-      and vim.fn.isdirectory(vim.fn.argv(0)) == 1
+    local a0 = vim.fn.argv(0)
+    local launched_with_dir = vim.fn.argc(-1) == 1
+      and (vim.fn.isdirectory(a0) == 1 or a0:match("^oil://") ~= nil)
       and not vim.g.started_with_stdin
-    then
+
+    if launched_with_dir then
       vim.api.nvim_create_autocmd("User", {
         pattern = "OilEnter",
         once = true,

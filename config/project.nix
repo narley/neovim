@@ -13,13 +13,16 @@
       # Try the attached LSP's root first, then fall back to marker files.
       detection_methods = [ "lsp" "pattern" ];
 
-      # Root markers for the pattern fallback: git repos, Nix flakes, node
-      # packages, make-based projects, other VCS.
+      # Root markers for pattern detection: the *repo* root — VCS dirs and Nix
+      # flakes. Deliberately NOT package.json / Makefile: those live in every
+      # workspace package of a monorepo (e.g. PrimaryPortal/ioi/packages/api),
+      # so including them roots the cwd at the package, not the repo. We want the
+      # monorepo root (…/ioi, which holds .git) so live_grep and the terminal
+      # span the whole project. When LSP and pattern roots differ this fork
+      # prefers the pattern root, so .git here wins over ts_ls's package root.
       patterns = [
         ".git"
         "flake.nix"
-        "package.json"
-        "Makefile"
         ".hg"
         ".svn"
       ];
